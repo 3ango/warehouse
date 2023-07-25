@@ -1,8 +1,10 @@
 package com.sango.warehouse.controller;
 
 import com.google.code.kaptcha.Producer;
+import com.sango.warehouse.entity.LoginUser;
 import com.sango.warehouse.entity.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -49,9 +51,9 @@ public class LoginController {
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             //关闭字节流
-            if(out!=null){
+            if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
@@ -60,9 +62,17 @@ public class LoginController {
             }
         }
     }
-    //登入的URL接口/login
+    /*
+    登入的URL接口/login
+
+    参数@RequestBody LoginUser loginUser --表示接受并封装前端传递的登录的用户信息的Json数据；
+    返回值Result对象 -- 表示向前端响应结果Result对象转的json串，包含响应状态码 成功失败响应 响应信息 响应数据
+     */
     @RequestMapping("/login")
-    public Result login(){
+    public Result login(@RequestBody LoginUser loginUser) {
+
 
     }
 }
+
+

@@ -4,7 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.pn.exception.BusinessException;
+import com.sango.warehouse.entity.CurrentUser;
+import com.sango.warehouse.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -25,7 +26,7 @@ public class TokenUtils {
 
     //注入配置文件中的warehouse.expire-time属性 -- token的过期时间
     @Value("${warehouse.expire-time}")
-    private int expireTime;
+    private int expireTime;//28800
 
     /**
      * 常量:
@@ -36,14 +37,18 @@ public class TokenUtils {
     private static final String CLAIM_NAME_USERCODE = "CLAIM_NAME_USERCODE";
     //token中存放用户真实姓名对应的名字
     private static final String CLAIM_NAME_USERNAME = "CLAIM_NAME_USERNAME";
-
-    private String sign(CurrentUser currentUser,String securityKey){
+    //真正生成jwt token的方法
+    private String sign(CurrentUser currentUser, String securityKey){
         String token = JWT.create()
+                //给jwt token的载体中存放用户信息
                 .withClaim(CLAIM_NAME_USERID, currentUser.getUserId())
                 .withClaim(CLAIM_NAME_USERCODE, currentUser.getUserCode())
                 .withClaim(CLAIM_NAME_USERNAME, currentUser.getUserName())
-                .withIssuedAt(new Date())//发行时间
+                //jwt token的颁发时间
+                .withIssuedAt(new Date())
+                //jwt token的过期时间
                 .withExpiresAt(new Date(System.currentTimeMillis() + expireTime *1000))//有效时间
+                //指定签名
                 .sign(Algorithm.HMAC256(securityKey));
         return token;
     }
